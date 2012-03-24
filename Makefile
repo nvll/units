@@ -10,10 +10,11 @@ CFLAGS =-O2 -W -Wall -Wno-unused-parameter
 DEFINES = 
 INCLUDE =-I.
 ECHO = @ 
+TESTDIR = tests
 
 # Src files to build / link in
 SRC := main.c
-SRC += $(wildcard tests/*.c)
+SRC += $(wildcard $(TESTDIR)/*.c)
 
 OBJS := $(addprefix $(OBJDIR)/, $(SRC:.c=.o))
 
