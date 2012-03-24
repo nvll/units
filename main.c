@@ -14,19 +14,22 @@
  * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */  
+#include <stdint.h>
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
-#include <unistd.h>
+#include <string.h>
 #include <sys/wait.h>
+#include <unistd.h>
 #include "units.h"
-#include "list.h"
 
-list_t test_list;
+#define offsetof(type, member) __builtin_offsetof(type, member)
+#define containerof(list, type, member) (type *) ((uintptr_t)list - offsetof(type, member))
 
-__attribute__((constructor)) void test_list_init(void)
+units_list_t test_list;
+
+__attribute__((constructor)) void test_units_list_init(void)
 {
-	list_initialize(&test_list);
+	units_list_initialize(&test_list);
 }
 
 int main (int argc, char *argv[])
@@ -34,8 +37,8 @@ int main (int argc, char *argv[])
 	int pid, status;
 	unsigned int pass = 0, fail = 0;
 
-	while (!list_is_empty(&test_list)) {
-		entry_t *test = list_remove_head_type(&test_list, entry_t, node);
+	while (!units_list_is_empty(&test_list)) {
+		entry_t *test = units_list_remove_head_type(&test_list, entry_t, node);
 		pid = fork();
 		if (pid) {
 			wait(&status);

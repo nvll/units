@@ -15,53 +15,24 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */  
 #include "units.h"
-#include "list.h"
 
-typedef struct {
-	int value;
-	list_t node;
-} list_entry_t;
+static units_test_t test_passing (void)
+{	
+	int x = 3, y = 7;
 
-static units_test_t test_list_init (void)
-{
-	list_t list;
-
-	list_initialize(&list);
-	if (!list_is_empty(&list))
-		test_fail(1, "list not initialized properly");
+	if (x + y == 10)
+		test_pass;
 	
-	test_pass;
+	test_fail(1, "mathematics do not work");
 }
 
-static units_test_t test_list_insert (void)
+static units_test_t test_failing (void)
 {
-	list_t list;
-	list_entry_t entry;
-	list_entry_t *returned;
-
-	entry.value = 17;
-	
-	list_initialize(&list);
-	list_add_head(&list, &entry.node);
-
-	returned = list_peek_head_type(&list, list_entry_t, node);
-
-	if (returned->value != entry.value)
-		test_fail(1, "peeked entry does not match the one inserted");
-	
-	returned = list_remove_tail_type(&list, list_entry_t, node);
-	
-	if (returned->value != entry.value)
-		test_fail(2, "removed tail entry does not match the one inserted");
-
-	if (!list_is_empty(&list))
-		test_fail(3, "list is not empty after removing sole element");
-
-	test_pass;
+	test_fail(127, "always fails with code 127");
 }
 
 start_tests
-add_test(test_list_init)
-add_test(test_list_insert)
+add_test(test_passing)
+add_test(test_failing)
 end_tests
 

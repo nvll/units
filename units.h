@@ -18,12 +18,59 @@
 #define __UNITS_H
 #include <stdlib.h>
 #include <stdio.h>
-#include "list.h"
+#include <stdint.h>
 
-extern list_t test_list;
+/* Units specific units_list implementation */
+struct units_list {
+	struct units_list *prev;
+	struct units_list *next;
+};
+typedef struct units_list units_list_t;
+
+static inline void units_list_initialize (units_list_t *units_list)
+{
+	units_list->next = units_list->prev = units_list;
+}
+
+static inline int units_list_is_empty(units_list_t *units_list)
+{
+	return (units_list->next == units_list);
+}
+static inline void units_list_add_after(units_list_t *target, units_list_t *node)
+{
+	node->next = target->next;
+	node->prev = target;
+
+	target->next = target->next->prev = node;
+}
+
+static inline units_list_t *units_list_remove(units_list_t *units_list, units_list_t *target)
+{
+	if (units_list == target)
+		return NULL;
+
+	target->prev->next = target->next;
+	target->next->prev = target->prev;
+
+	target->next = target->prev = NULL;
+
+	return target;
+}
+
+static inline units_list_t *units_list_remove_head (units_list_t *list)
+{
+	return units_list_remove(list, list->next);
+}
+
+#define units_list_remove_head_type(list, type, member)  \
+		containerof(units_list_remove_head(list), type, member)
+	
+/* test code */
+extern units_list_t test_list;
+
 struct test_entry {
 	unsigned int (*func)(void);
-	list_t node;
+	units_list_t node;
 };
 typedef struct test_entry entry_t;
 typedef unsigned int units_test_t;
@@ -33,20 +80,23 @@ static inline void _add_test(units_test_t (*func)(void))
 
 	entry_t *test = malloc(sizeof(entry_t));
 	test->func = func;
-	list_add_tail(&test_list, &test->node);
+	units_list_add_after(test_list.prev, &test->node);
 }
 
-#define start_tests __attribute__((constructor)) static void test_initializer (void) {
+#define CONCAT(x, y) x##_##y
+#define UNIQUE_TEST_NAME(x, y) CONCAT(x, y)
+
+#define start_tests __attribute__((constructor)) static void UNIQUE_TEST_NAME(units_test, __COUNTER__) (void) {
 #define add_test(func) _add_test(func);
 #define end_tests }
 #define test_pass \
 	do { \
-		printf("%s: PASS\n", __func__); \
+		printf("%s: PASS\n", __PRETTY_FUNCTION__); \
 		return 0; \
 	} while (0)
 #define test_fail(value, string) \
 	do { \
-		printf("%s: FAIL (error %d: %s)\n", __func__, value, string); \
+		printf("%s: FAIL (error %d: %s)\n", __PRETTY_FUNCTION__, value, string); \
 		return value; \
 	} while (0);
 
