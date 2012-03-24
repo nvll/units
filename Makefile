@@ -3,7 +3,7 @@ MKDIR = mkdir -p $(dir $@)
 GET_PARENT = $(dir $(lastword $(MAKEFILE_LIST)))
 
 # Setup vars for build
-CC = ~/src/gcc/bin/gcc-4.6
+CC = gcc 
 OUTPUT := runtests
 OBJDIR := build
 CFLAGS =-O2 -W -Wall -Wno-unused-parameter
