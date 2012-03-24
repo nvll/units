@@ -18,7 +18,6 @@ SRC += $(wildcard tests/*.c)
 OBJS := $(addprefix $(OBJDIR)/, $(SRC:.c=.o))
 
 DEPS := $(OBJS:.o=.d)
--include $(DEPS)
 
 .PHONY: all
 
@@ -35,3 +34,5 @@ $(OBJDIR)/%.o: %.c
 
 clean:
 	rm -rf $(OBJDIR) $(OUTPUT)
+
+-include $(DEPS)
