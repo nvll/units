@@ -31,7 +31,7 @@ typedef unsigned int units_test_t;
 static inline void _add_test(units_test_t (*func)(void))
 {
 
-	entry_t *test = malloc(sizeof(entry_t) * sizeof(char));
+	entry_t *test = malloc(sizeof(entry_t));
 	test->func = func;
 	list_add_tail(&test_list, &test->node);
 }
