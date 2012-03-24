@@ -16,6 +16,7 @@
  */  
 #ifndef __LIST_H
 #define __LIST_H
+#include <stdint.h>
 
 #define offsetof(type, member) __builtin_offsetof(type, member)
 #define containerof(list, type, member) (type *) ((uintptr_t)list - offsetof(type, member))

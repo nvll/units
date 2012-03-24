@@ -36,20 +36,17 @@ static inline void _add_test(units_test_t (*func)(void))
 	list_add_tail(&test_list, &test->node);
 }
 
-#define CONCAT(x, y) x##_##y
-#define UNIQUE_TEST_NAME(x, y) CONCAT(x, y)
-
-#define start_tests __attribute__((constructor)) static void UNIQUE_TEST_NAME(units_test, __COUNTER__) (void) {
+#define start_tests __attribute__((constructor)) static void test_initializer (void) {
 #define add_test(func) _add_test(func);
 #define end_tests }
 #define test_pass \
 	do { \
-		printf("%s: PASS\n", __PRETTY_FUNCTION__); \
+		printf("%s: PASS\n", __func__); \
 		return 0; \
 	} while (0)
 #define test_fail(value, string) \
 	do { \
-		printf("%s: FAIL (error %d: %s)\n", __PRETTY_FUNCTION__, value, string); \
+		printf("%s: FAIL (error %d: %s)\n", __func__, value, string); \
 		return value; \
 	} while (0);
 
