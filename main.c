@@ -23,9 +23,6 @@
 #include <unistd.h>
 #include "units.h"
 
-#define offsetof(type, member) __builtin_offsetof(type, member)
-#define containerof(list, type, member) (type *) ((uintptr_t)list - offsetof(type, member))
-
 units_list_t test_list;
 int units_test_cnt = 0;
 

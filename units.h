@@ -21,6 +21,9 @@
 #include <stdint.h>
 #include <string.h>
 
+#define offsetof(type, member) __builtin_offsetof(type, member)
+#define containerof(list, type, member) (type *) ((uintptr_t)list - offsetof(type, member))
+
 /* Units specific units_list implementation */
 struct units_list {
 	struct units_list *prev;
