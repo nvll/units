@@ -73,6 +73,7 @@ extern int units_test_cnt;
 typedef struct {
 	unsigned int value;
 	const char *buf;
+	const char *func;
 	int len;
 } return_t;
 
@@ -94,12 +95,13 @@ static inline void _add_test(units_test_t (*func)(void))
 	units_test_cnt++;
 }
 
-static inline return_t *test_result (unsigned int value, const char *buf)
+static inline return_t *test_result (unsigned int value, const char *buf, const char *func)
 {
 	return_t *ret = malloc(sizeof(return_t));
 	ret->value = value;
-	
+	ret->func = func;
 	ret->buf = buf; 
+
 	if (buf)
 		ret->len = strlen(ret->buf); 
 	else
@@ -107,9 +109,10 @@ static inline return_t *test_result (unsigned int value, const char *buf)
 	return ret; 
 }
 
-#define test_pass return test_result(0, NULL)
-#define test_pass_v(string) return test_result(0, string)
-#define test_fail(x, y) return test_result(x, y)
+#define test_pass return test_result(0, NULL, __func__)
+#define test_pass_v(string) return test_result(0, string, __func__)
+#define test_fail return test_result(1, NULL, __func__)
+#define test_fail_v(x) return test_result(1, x, __func__)
 
 #define start_tests __attribute__((constructor)) static void units_test (void) {
 #define add_test(x) _add_test(x); // Just to keep ; usage consistent

@@ -16,23 +16,36 @@
  */  
 #include "units.h"
 
-static units_test_t test_passing (void)
+static units_test_t always_passing (void)
 {	
 	int x = 3, y = 7;
 
 	if (x + y == 10)
 		test_pass;
 	
-	test_fail(1, "mathematics do not work");
+	test_fail_v("mathematics do not work");
 }
 
-static units_test_t test_failing (void)
+static units_test_t always_failing (void)
 {
-	test_fail(127, "always fails with code 127");
+	test_fail;
+}
+
+static units_test_t fail_with_output (void)
+{
+	const char *output = "this is a string with\nlinebreaks\nin the failure output";
+	test_fail_v(output);
+}
+
+static units_test_t pass_with_output (void)
+{
+	test_pass_v("everything went better than expected");
 }
 
 start_tests
-add_test(test_passing)
-add_test(test_failing)
+add_test(always_passing)
+add_test(always_failing)
+add_test(fail_with_output)
+add_test(pass_with_output)
 end_tests
 

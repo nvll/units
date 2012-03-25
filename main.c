@@ -50,13 +50,16 @@ int main (int argc, char *argv[])
 			else
 				fail++;
 		} else {
+			// We're a bit fast and loose with memory since the child process will die anyway
 			return_t *ret = test->func();
 			if (ret->value != 0)
 				printf("not ");
-			printf("ok %d ", current_test);
-			if (ret->len > 0)
-				printf("- %.*s", ret->len, ret->buf);
-			printf("\n");
+			printf("ok %d - %s\n", current_test, ret->func);
+			if (ret->len > 0) {
+				char *pos, *tmp = strdup(ret->buf);
+				while ((pos = strsep(&tmp, &(char){'\n'})))
+					printf("   %s\n", pos);
+			}
 			exit(ret->value);
 		}
 		
@@ -64,7 +67,7 @@ int main (int argc, char *argv[])
 	}
 	
 	int total = pass + fail;
-	printf("%d %s run, %d/%d passed\n", total, (total == 1) ? "test" : "tests", pass, total);
+	printf("# %d %s run, %d/%d passed\n", total, (total == 1) ? "test" : "tests", pass, total);
 	
 	return fail;
 }
