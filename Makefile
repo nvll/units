@@ -6,7 +6,7 @@ GET_PARENT = $(dir $(lastword $(MAKEFILE_LIST)))
 CC = gcc 
 OUTPUT := runtests
 OBJDIR := build
-CFLAGS =-O2 -W -Wall -Wno-unused-parameter
+CFLAGS =-std=c99 -O2 -W -Wall -Wno-unused-parameter
 DEFINES = 
 INCLUDE =-I.
 ECHO = @ 
