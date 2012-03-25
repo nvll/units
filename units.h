@@ -19,6 +19,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
+#include <string.h>
 
 /* Units specific units_list implementation */
 struct units_list {
@@ -67,13 +68,22 @@ static inline units_list_t *units_list_remove_head (units_list_t *list)
 	
 /* test code */
 extern units_list_t test_list;
+extern int units_test_cnt;
 
-struct test_entry {
-	unsigned int (*func)(void);
+typedef struct {
+	unsigned int value;
+	const char *buf;
+	int len;
+} return_t;
+
+typedef return_t * units_test_t;
+
+typedef struct {
+	return_t *(*func)(void);
 	units_list_t node;
-};
-typedef struct test_entry entry_t;
-typedef unsigned int units_test_t;
+} entry_t;
+
+
 
 static inline void _add_test(units_test_t (*func)(void))
 {
@@ -81,23 +91,28 @@ static inline void _add_test(units_test_t (*func)(void))
 	entry_t *test = malloc(sizeof(entry_t));
 	test->func = func;
 	units_list_add_after(test_list.prev, &test->node);
+	units_test_cnt++;
 }
 
-#define CONCAT(x, y) x##_##y
-#define UNIQUE_TEST_NAME(x, y) CONCAT(x, y)
+static inline return_t *test_result (unsigned int value, const char *buf)
+{
+	return_t *ret = malloc(sizeof(return_t));
+	ret->value = value;
+	
+	ret->buf = buf; 
+	if (buf)
+		ret->len = strlen(ret->buf); 
+	else
+		ret->len = 0; 
+	return ret; 
+}
 
-#define start_tests __attribute__((constructor)) static void UNIQUE_TEST_NAME(units_test, __COUNTER__) (void) {
-#define add_test(func) _add_test(func);
+#define test_pass return test_result(0, NULL)
+#define test_pass_v(string) return test_result(0, string)
+#define test_fail(x, y) return test_result(x, y)
+
+#define start_tests __attribute__((constructor)) static void units_test (void) {
+#define add_test(x) _add_test(x); // Just to keep ; usage consistent
 #define end_tests }
-#define test_pass \
-	do { \
-		printf("%s: PASS\n", __PRETTY_FUNCTION__); \
-		return 0; \
-	} while (0)
-#define test_fail(value, string) \
-	do { \
-		printf("%s: FAIL (error %d: %s)\n", __PRETTY_FUNCTION__, value, string); \
-		return value; \
-	} while (0);
 
 #endif

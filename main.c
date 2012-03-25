@@ -26,6 +26,7 @@
 #define containerof(list, type, member) (type *) ((uintptr_t)list - offsetof(type, member))
 
 units_list_t test_list;
+int units_test_cnt = 0;
 
 __attribute__((constructor)) void test_units_list_init(void)
 {
@@ -34,9 +35,11 @@ __attribute__((constructor)) void test_units_list_init(void)
 
 int main (int argc, char *argv[])
 {
-	int pid, status;
+	int pid, status, current_test = 1;
 	unsigned int pass = 0, fail = 0;
 
+	// Begin TAP output
+	printf("1..%d\n", units_test_cnt);
 	while (!units_list_is_empty(&test_list)) {
 		entry_t *test = units_list_remove_head_type(&test_list, entry_t, node);
 		pid = fork();
@@ -47,8 +50,17 @@ int main (int argc, char *argv[])
 			else
 				fail++;
 		} else {
-			exit(test->func());
+			return_t *ret = test->func();
+			if (ret->value != 0)
+				printf("not ");
+			printf("ok %d ", current_test);
+			if (ret->len > 0)
+				printf("- %.*s", ret->len, ret->buf);
+			printf("\n");
+			exit(ret->value);
 		}
+		
+		current_test++;
 	}
 	
 	int total = pass + fail;
