@@ -37,7 +37,8 @@ int main (int argc, char *argv[])
 {
 	int pid, status, current_test = 1;
 	unsigned int pass = 0, fail = 0;
-
+	
+	setvbuf(stdout, NULL, _IONBF, 0);
 	// Begin TAP output
 	printf("1..%d\n", units_test_cnt);
 	while (!units_list_is_empty(&test_list)) {
