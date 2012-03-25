@@ -26,9 +26,34 @@ Running tests is easy. For most projects you can simply drop a .c in the tests d
 	ok 1 - always_passing
 	not ok 2 - always_failing
 	not ok 3 - fail_with_output
-	this is a string with
-	linebreaks
-	in the failure output
+		this is a string with
+		linebreaks
+		in the failure output
 	ok 4 - pass_with_output
-	everything went better than expected
+		everything went better than expected
 	# 4 tests run, 2/4 passed 
+
+Example of running the example tests via `prove`:
+
+	user@host:~/code/units$ prove -e '' -v ./runtests 
+	./runtests .. 
+	1..4
+	ok 1 - always_passing
+	not ok 2 - always_failing
+	not ok 3 - fail_with_output
+		this is a string with
+		linebreaks
+		in the failure output
+	ok 4 - pass_with_output
+		everything went better than expected
+	# 4 tests run, 2/4 passed
+	Dubious, test returned 2 (wstat 512, 0x200)
+	Failed 2/4 subtests 
+	
+	Test Summary Report
+	-------------------
+	./runtests (Wstat: 512 Tests: 4 Failed: 2)
+  	Failed tests:  2-3
+  	Non-zero exit status: 2
+	Files=1, Tests=4,  0 wallclock secs ( 0.03 usr +  0.00 sys =  0.03 CPU)
+	Result: FAIL
